@@ -1,27 +1,28 @@
 from mesa import Model
 from mesa.datacollection import DataCollector
-from agents import SchellingAgent
+from agents import EvacuationAgent
 from mesa.space import SingleGrid
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Function to display the grid
+# Function to display the grid for debugging
 def plot_grid(grid, title="Agent Distribution"):
     grid_array = np.zeros((grid.height, grid.width))
     for cell in grid.coord_iter():
         cell_content, loc = cell
         x, y = loc
         if cell_content is not None:
-            grid_array[y][x] = cell_content.type  # Use agent's type for coloring
+            # Map "C" to 1 and "D" to 2
+            grid_array[y][x] = 1 if cell_content.move == "C" else 2
     plt.figure(figsize=(8, 8))
     plt.imshow(grid_array, cmap="viridis", origin="upper")
     plt.title(title)
-    plt.colorbar(label="Agent Type")
+    plt.colorbar(label="Agent Move (1 = Cooperating, 2 = Defecting)")
     plt.show()
 
 
 
-class Schelling(Model):
+class Evacuation(Model):
     """Model class for the Schelling segregation model."""
 
     def __init__(
@@ -29,8 +30,7 @@ class Schelling(Model):
         height: int = 40,
         width: int = 40,
         density: float = 0.8,
-        minority_pc: float = 0.5,
-        homophily: int = 3,
+        deflecting_pc: float = 0.5,
         radius: int = 1,
         seed=None,
     ):
@@ -40,8 +40,7 @@ class Schelling(Model):
             width: Width of the grid
             height: Height of the grid
             density: Initial chance for a cell to be populated (0-1)
-            minority_pc: Chance for an agent to be in minority class (0-1)
-            homophily: Minimum number of similar neighbors needed for happiness
+            deflecting_pc: Chance for an agent start as deflecting
             radius: Search radius for checking neighbor similarity
             seed: Seed for reproducibility
         """
@@ -51,40 +50,27 @@ class Schelling(Model):
         self.height = height
         self.width = width
         self.density = density
-        self.minority_pc = minority_pc
-        self.homophily = homophily
-        self.radius = radius
+        self.deflecting_pc = deflecting_pc
+        self.radius = radius # I assume will need for later to decide how many neighbors for a empty space in front
 
         # Initialize grid
         self.grid = SingleGrid(width, height, torus=True)
 
-        # Track happiness
-        self.happy = 0
 
-        # Set up data collection
+        #! Set up data collection
         self.datacollector = DataCollector(
-            model_reporters={
-                "happy": "happy",
-                "pct_happy": lambda m: (m.happy / len(m.agents)) * 100
-                if len(m.agents) > 0
-                else 0,
-                "population": lambda m: len(m.agents),
-                "minority_pct": lambda m: (
-                    sum(1 for agent in m.agents if agent.type == 1)
-                    / len(m.agents)
-                    * 100
-                    if len(m.agents) > 0
-                    else 0
-                ),
-            },
-            agent_reporters={"agent_type": "type"},
+            {
+                "Cooperating_Agents": lambda m: len(
+                    [a for a in m.agents if a.move == "C"]
+                )
+            }
         )
 
         # Create agents and place them on the grid
         for _, pos in self.grid.coord_iter():
             if self.random.random() < self.density:
-                agent_type = 1
-                agent = SchellingAgent(self, agent_type)
+                agent_type = "D" if self.random.random() < deflecting_pc else "C"
+                agent = EvacuationAgent(self, agent_type)
                 self.grid.place_agent(agent, pos)
 
         # Collect initial state
@@ -92,13 +78,11 @@ class Schelling(Model):
 
     def step(self):
         """Run one step of the model."""
-        self.happy = 0  # Reset counter of happy agents
         self.agents.shuffle_do("step")  # Activate all agents in random order
         self.datacollector.collect(self)  # Collect data
-        #self.running = self.happy < len(self.agents)  # Continue until everyone is happy
 
-
-model = Schelling()
+# for debugging code
+model = Evacuation()
 steps = 10
 plot_grid(model.grid, title="Initial Agent Distribution")
 for step in range(steps):

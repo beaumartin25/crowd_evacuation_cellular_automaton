@@ -1,6 +1,6 @@
 import solara
 
-from model import Schelling
+from model import Evacuation
 from mesa.visualization import (
     Slider,
     SolaraViz,
@@ -9,33 +9,33 @@ from mesa.visualization import (
 )
 
 
-def get_happy_agents(model):
-    """Display a text count of how many happy agents there are."""
-    return solara.Markdown(f"**Happy agents: {model.happy}**")
-
-
-def agent_portrayal(agent):
-    return {"color": "tab:orange" if agent.type == 0 else "tab:blue"}
+def pd_agent_portrayal(agent):
+    """
+    Portrayal function for rendering PD agents in the visualization.
+    """
+    return {
+        "color": "blue" if agent.move == "C" else "red",
+        "marker": "s",  # square marker
+        "size": 25,
+    }
 
 
 model_params = {
     "density": Slider("Agent density", 0.8, 0.1, 1.0, 0.1),
-    "minority_pc": Slider("Fraction minority", 0.2, 0.0, 1.0, 0.05),
-    "homophily": Slider("Homophily", 3, 0, 8, 1),
+    "deflecting_pc": Slider("Fraction starting deflect", 0.2, 0.0, 1.0, 0.05),
     "width": 20,
     "height": 20,
 }
 
-model1 = Schelling()
+model1 = Evacuation()
 
-HappyPlot = make_plot_component({"happy": "tab:green"})
+plot_component = make_plot_component("Cooperating_Agents")
 
 page = SolaraViz(
     model1,
     components=[
-        make_space_component(agent_portrayal),
-        HappyPlot,
-        get_happy_agents,
+        make_space_component(pd_agent_portrayal),
+        plot_component,
     ],
     model_params=model_params,
 )
