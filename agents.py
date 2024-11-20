@@ -19,15 +19,21 @@ class SchellingAgent(Agent):
         neighbors = self.model.grid.iter_neighbors(
             self.pos, moore=True, radius=self.model.radius
         )
-        print(neighbors)
-        # Count similar neighbors
-        similar = sum(neighbor.type == self.type for neighbor in neighbors)
 
-        # If unhappy, move to a random empty cell:
-        if similar < self.model.homophily:
-            self.model.grid.move_to_empty(self)
-        else:
-            self.model.happy += 1
+        new_pos = (self.pos[0] - 1, self.pos[1])
+        if self.pos[0] != 0 and self.model.grid.is_cell_empty(new_pos):
+            self.model.grid.move_agent(self, new_pos)
+        # else:
+        #     self.model.grid.remove_agent(self)
+
+        # # Count similar neighbors
+        # similar = sum(neighbor.type == self.type for neighbor in neighbors)
+        #
+        # # If unhappy, move to a random empty cell:
+        # if similar < self.model.homophily:
+        #     self.model.grid.move_to_empty(self)
+        # else:
+        #     self.model.happy += 1
 
         # if self.model.grid.is_cell_empty(self.pos[0]-1,self.pos[1]):
         #     self.modle.grid.move_agent(self.pos[0]-1,self.pos[1])

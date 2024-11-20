@@ -83,7 +83,7 @@ class Schelling(Model):
         # Create agents and place them on the grid
         for _, pos in self.grid.coord_iter():
             if self.random.random() < self.density:
-                agent_type = 1 if self.random.random() < minority_pc else 0
+                agent_type = 1
                 agent = SchellingAgent(self, agent_type)
                 self.grid.place_agent(agent, pos)
 
@@ -95,7 +95,7 @@ class Schelling(Model):
         self.happy = 0  # Reset counter of happy agents
         self.agents.shuffle_do("step")  # Activate all agents in random order
         self.datacollector.collect(self)  # Collect data
-        self.running = self.happy < len(self.agents)  # Continue until everyone is happy
+        #self.running = self.happy < len(self.agents)  # Continue until everyone is happy
 
 
 model = Schelling()
