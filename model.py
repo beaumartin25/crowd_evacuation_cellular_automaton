@@ -32,6 +32,7 @@ class Evacuation(Model):
         density: float = 0.8,
         deflecting_pc: float = 0.5,
         radius: int = 1,
+        exit_list: list = [(0,19),(0,20),(0,21)],
         seed=None,
     ):
         """Create a new Schelling model.
@@ -57,7 +58,7 @@ class Evacuation(Model):
         self.grid = SingleGrid(width, height, torus=True)
 
 
-        #! Set up data collection
+        #! Set up data collection, ideas: percentage of agents that moved, how many have changed to deflect
         self.datacollector = DataCollector(
             {
                 "Cooperating_Agents": lambda m: len(
@@ -70,7 +71,7 @@ class Evacuation(Model):
         for _, pos in self.grid.coord_iter():
             if self.random.random() < self.density:
                 agent_type = "D" if self.random.random() < deflecting_pc else "C"
-                agent = EvacuationAgent(self, agent_type)
+                agent = EvacuationAgent(self, agent_type, exit_list, pos)
                 self.grid.place_agent(agent, pos)
 
         # Collect initial state
@@ -80,6 +81,7 @@ class Evacuation(Model):
         """Run one step of the model."""
         self.agents.shuffle_do("step")  # Activate all agents in random order
         self.datacollector.collect(self)  # Collect data
+        self.agents.do('reset_moved')
 
 # for debugging code
 model = Evacuation()

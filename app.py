@@ -23,8 +23,8 @@ def pd_agent_portrayal(agent):
 model_params = {
     "density": Slider("Agent density", 0.8, 0.1, 1.0, 0.1),
     "deflecting_pc": Slider("Fraction starting deflect", 0.2, 0.0, 1.0, 0.05),
-    "width": 20,
-    "height": 20,
+    "width": 40,
+    "height": 40,
 }
 
 model1 = Evacuation()
