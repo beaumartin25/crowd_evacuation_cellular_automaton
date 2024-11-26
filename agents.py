@@ -6,7 +6,7 @@ import random
 class EvacuationAgent(Agent):
     """Schelling segregation agent."""
 
-    def __init__(self, model, starting_move, exit_list, pos):
+    def __init__(self, model, starting_move, pos):
         """Create a new Schelling agent.
 
         Args:
@@ -15,10 +15,8 @@ class EvacuationAgent(Agent):
         """
         super().__init__(model)
         self.move = starting_move
-        self.exit_list = exit_list
         self.score = 0
         self.moved = False
-        self.exit_list = exit_list
         if starting_move:
             self.move = starting_move
         else:
@@ -28,7 +26,7 @@ class EvacuationAgent(Agent):
         # find nearest exit
         distance = 999999999
         self.closest_exit = tuple()
-        for exit_pos in exit_list:
+        for exit_pos in self.model.exit_list:
             new_distance = np.linalg.norm(np.array(pos) - np.array(exit_pos))
             if (new_distance < distance):
                 distance = new_distance
@@ -73,7 +71,7 @@ class EvacuationAgent(Agent):
                 r_int = random.randint(0,  chance - 1)
                 winner = potential_movers[r_int]
             else: # contain multiple deflectors
-                chance = len(defectors) * 2 # 2 is penalty but can create variable alter
+                chance = len(defectors) * self.model.deflector_penalty # 2 is penalty but can create variable alter
                 r_int = random.randint(0, chance - 1)
                 if r_int < len(defectors):
                     winner = defectors[r_int]
@@ -96,7 +94,7 @@ class EvacuationAgent(Agent):
 
     def find_nearest_exit(self) -> None:
         distance = np.linalg.norm(np.array(self.pos) - np.array(self.closest_exit))
-        for exit_pos in self.exit_list:
+        for exit_pos in self.model.exit_list:
             new_distance = np.linalg.norm(np.array(self.pos) - np.array(exit_pos))
             if (new_distance < distance):
                 distance = new_distance

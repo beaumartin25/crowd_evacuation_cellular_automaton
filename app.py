@@ -28,6 +28,7 @@ def pd_agent_portrayal(agent):
 model_params = {
     "density": Slider("Agent density", 0.8, 0.1, 1.0, 0.1),
     "deflecting_pc": Slider("Fraction starting deflect", 0.2, 0.0, 1.0, 0.05),
+    "deflector_penalty": Slider("Deflector Penalty", 2, 1, 10, 1),
     "width": 40,
     "height": 40,
 }

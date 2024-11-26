@@ -29,10 +29,11 @@ class Evacuation(Model):
         self,
         height: int = 40,
         width: int = 40,
-        density: float = 0.5,
-        deflecting_pc: float = 0.5,
+        density: float = 0.8,
+        deflecting_pc: float = 0.2,
         radius: int = 1,
         exit_list: list = [(0,19),(0,20),(0,21)],
+        deflector_penalty = 2,
         seed=None,
     ):
         """Create a new Schelling model.
@@ -53,6 +54,8 @@ class Evacuation(Model):
         self.density = density
         self.deflecting_pc = deflecting_pc
         self.radius = radius # I assume will need for later to decide how many neighbors for a empty space in front
+        self.exit_list = exit_list
+        self.deflector_penalty = deflector_penalty
 
         # Initialize grid
         self.grid = SingleGrid(width, height, torus=True)
@@ -71,7 +74,7 @@ class Evacuation(Model):
         for _, pos in self.grid.coord_iter():
             if self.random.random() < self.density:
                 agent_type = "D" if self.random.random() < deflecting_pc else "C"
-                agent = EvacuationAgent(self, agent_type, exit_list, pos)
+                agent = EvacuationAgent(self, agent_type, pos)
                 self.grid.place_agent(agent, pos)
 
         # Collect initial state
