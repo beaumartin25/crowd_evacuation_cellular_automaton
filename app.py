@@ -35,7 +35,7 @@ model_params = {
 
 model1 = Evacuation()
 
-plot_component = make_plot_component("Cooperating_Agents")
+plot_component = make_plot_component("Deflecting_Agents")
 
 SpaceGraph = make_space_component(
     pd_agent_portrayal, post_process=post_process, draw_grid=False

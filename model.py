@@ -34,6 +34,7 @@ class Evacuation(Model):
         radius: int = 1,
         exit_list: list = [(0,19),(0,20),(0,21)],
         deflector_penalty = 2,
+        conflict_strategy_inertia=2,
         seed=None,
     ):
         """Create a new Schelling model.
@@ -56,6 +57,7 @@ class Evacuation(Model):
         self.radius = radius # I assume will need for later to decide how many neighbors for a empty space in front
         self.exit_list = exit_list
         self.deflector_penalty = deflector_penalty
+        self.conflict_strategy_inertia = conflict_strategy_inertia
 
         # Initialize grid
         self.grid = SingleGrid(width, height, torus=True)
@@ -64,8 +66,8 @@ class Evacuation(Model):
         #! Set up data collection, ideas: percentage of agents that moved, how many have changed to deflect
         self.datacollector = DataCollector(
             {
-                "Cooperating_Agents": lambda m: len(
-                    [a for a in m.agents if a.move == "C"]
+                "Deflecting_Agents": lambda m: len(
+                    [a for a in m.agents if a.move == "D"]
                 )
             }
         )

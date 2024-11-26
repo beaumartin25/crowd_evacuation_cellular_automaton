@@ -71,13 +71,16 @@ class EvacuationAgent(Agent):
                 r_int = random.randint(0,  chance - 1)
                 winner = potential_movers[r_int]
             else: # contain multiple deflectors
+                if len(cooperators) > 0: # update status of cooperators that lost the opportunity to win the spot
+                    for i in cooperators:
+                        if random.randint(0, self.model.conflict_strategy_inertia - 1) == 0:
+                            i.move = "D"
                 chance = len(defectors) * self.model.deflector_penalty # 2 is penalty but can create variable alter
                 r_int = random.randint(0, chance - 1)
                 if r_int < len(defectors):
                     winner = defectors[r_int]
                 else: # no one moves!
                     return
-
 
             # moving and updating status for the winning agent
             self.model.grid.move_agent(winner, best_pos)
@@ -87,7 +90,7 @@ class EvacuationAgent(Agent):
             if self.moved:
                 return
 
-            #! update status of cooperators that lost the opportunity to win the spot
+
 
     def reset_moved(self) -> None:
         self.moved = False
