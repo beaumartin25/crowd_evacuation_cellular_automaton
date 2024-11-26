@@ -43,33 +43,23 @@ class EvacuationAgent(Agent):
             self.model.grid.remove_agent(self)
             return
 
-        neighborhood = self.model.grid.get_neighborhood(
-            self.pos, moore=True, radius=self.model.radius
-        )
 
         #! you might want to put a loop here just in case another agent steals this agents move
         potential_move = True # default check variable
         while potential_move:
-            best_pos = self.pos
 
             # find empty space that moves toward your closest exit
-            potential_move = False
-            for i in neighborhood:
-                if self.model.grid.is_cell_empty(i) and (np.linalg.norm(np.array(best_pos) - np.array(self.closest_exit)) > (np.linalg.norm(np.array(i) - np.array(self.closest_exit)))):
-                    best_pos = i
-                    potential_move = True
+            best_pos = self.find_best_move()
 
             if best_pos == self.pos: # check if have new pos
                 return
 
 
             # see if any agents want the exit and haven't already moved this round
-            neighbors = self.model.grid.get_neighbors(
-            self.pos, moore=True, include_center=True, radius=1
-            )
+            neighbors = self.model.grid.get_neighbors(self.pos, moore=True, include_center=True, radius=1)
             potential_movers = []
             for i in neighbors:
-                if (not i.moved) and (np.linalg.norm(np.array(best_pos) - np.array(i.closest_exit)) < (np.linalg.norm(np.array(i.pos) - np.array(i.closest_exit)))): #! maybe find their own current best step in a method would add more complexity
+                if (not i.moved) and (best_pos) == (i.find_best_move()): # find their own current best move
                     potential_movers.append(i)
 
 
@@ -112,3 +102,20 @@ class EvacuationAgent(Agent):
                 distance = new_distance
                 self.closest_exit = exit_pos
 
+
+    def find_best_move(self):
+        neighborhood = self.model.grid.get_neighborhood(self.pos, moore=True, radius=self.model.radius)
+        best_pos = self.pos
+        best_distance = np.linalg.norm(np.array(self.pos) - np.array(self.closest_exit))
+
+        for neighbor_pos in neighborhood:
+            if self.model.grid.is_cell_empty(neighbor_pos):
+                # Calculate the distance from the neighbor to the closest exit
+                distance_to_exit = np.linalg.norm(np.array(neighbor_pos) - np.array(self.closest_exit))
+
+                # If the neighbor is closer to the exit, set it as the best position
+                if distance_to_exit < best_distance:
+                    best_pos = neighbor_pos
+                    best_distance = distance_to_exit
+
+        return best_pos

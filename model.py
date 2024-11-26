@@ -29,7 +29,7 @@ class Evacuation(Model):
         self,
         height: int = 40,
         width: int = 40,
-        density: float = 0.8,
+        density: float = 0.5,
         deflecting_pc: float = 0.5,
         radius: int = 1,
         exit_list: list = [(0,19),(0,20),(0,21)],
