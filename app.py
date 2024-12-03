@@ -36,6 +36,8 @@ model_params = {
 model1 = Evacuation()
 
 plot_component = make_plot_component("Deflecting_Agents")
+plot_agents_moved = make_plot_component("Agents_Moved")
+plot_exited_count = make_plot_component("Exited_count")
 
 SpaceGraph = make_space_component(
     pd_agent_portrayal, post_process=post_process, draw_grid=False
@@ -46,6 +48,8 @@ page = SolaraViz(
     components=[
         SpaceGraph,
         plot_component,
+        plot_agents_moved,
+        plot_exited_count,
     ],
     model_params=model_params,
 )

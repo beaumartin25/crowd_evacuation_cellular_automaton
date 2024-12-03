@@ -54,7 +54,7 @@ class Evacuation(Model):
         self.width = width
         self.density = density
         self.deflecting_pc = deflecting_pc
-        self.radius = radius # I assume will need for later to decide how many neighbors for a empty space in front
+        self.radius = radius # I assume will need for later to decide how many neighbors for an empty space in front
         self.exit_list = exit_list
         self.deflector_penalty = deflector_penalty
         self.conflict_strategy_inertia = conflict_strategy_inertia
@@ -62,13 +62,20 @@ class Evacuation(Model):
         # Initialize grid
         self.grid = SingleGrid(width, height, torus=True)
 
+        self.total_exited_agents = 0
+        self.step_count = 0
 
         #! Set up data collection, ideas: percentage of agents that moved, how many have changed to deflect
         self.datacollector = DataCollector(
             {
+                "Agents_Moved": lambda m: len([a for a in m.agents if a.moved]),
                 "Deflecting_Agents": lambda m: len(
-                    [a for a in m.agents if a.move == "D"]
-                )
+                    [a for a in m.agents if a.move == "D"]),
+                "Cooperating_Agents": lambda m: len(
+                    [a for a in m.agents if a.move == "C"]
+                ),
+                "Exited_count": lambda m: self.total_exited_agents,
+                "Average_Exited": lambda m: m.update_average_exited(),
             }
         )
 
@@ -82,11 +89,24 @@ class Evacuation(Model):
         # Collect initial state
         self.datacollector.collect(self)
 
+    def update_average_exited(self):
+        """Calculate and update the average number of agents exiting."""
+        # Get the count of agents who have exited this step
+        exited_count = len([a for a in self.agents if a.pos == a.closest_exit])
+
+        # Update totals
+        self.total_exited_agents += exited_count
+        self.step_count += 1
+
+        # Calculate and return the average
+        return self.total_exited_agents / self.step_count if self.step_count > 0 else 0
     def step(self):
         """Run one step of the model."""
         self.agents.shuffle_do("step")  # Activate all agents in random order
         self.datacollector.collect(self)  # Collect data
         self.agents.do('reset_moved')
+
+
 
 # for debugging code
 model = Evacuation()
