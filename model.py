@@ -100,17 +100,22 @@ class Evacuation(Model):
 
         # Calculate and return the average
         return self.total_exited_agents / self.step_count if self.step_count > 0 else 0
+
     def step(self):
         """Run one step of the model."""
-        self.agents.shuffle_do("step")  # Activate all agents in random order
-        self.datacollector.collect(self)  # Collect data
-        self.agents.do('reset_moved')
+        agent_count = self.count_agents()
+        if agent_count > 1:
+            self.agents.shuffle_do("step")  # Activate all agents in random order
+            self.datacollector.collect(self)  # Collect data
+            self.agents.do('reset_moved')  # Reset moved status for all agents
 
+    def count_agents(self):
+        return sum(1 for cell in self.grid.coord_iter() if cell[0] is not None)
 
 
 # for debugging code
 model = Evacuation()
-steps = 10
+steps = 1000
 plot_grid(model.grid, title="Initial Agent Distribution")
 for step in range(steps):
     model.step()
