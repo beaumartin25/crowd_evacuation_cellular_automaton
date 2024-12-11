@@ -37,9 +37,6 @@ class EvacuationAgent(Agent):
         """Determine if agent is happy and move if necessary."""
         if self.pos == None or self.moved:
             return
-        if (self.pos == self.closest_exit):
-            self.model.grid.remove_agent(self)
-            return
 
 
         #! you might want to put a loop here just in case another agent steals this agents move
@@ -94,6 +91,12 @@ class EvacuationAgent(Agent):
 
     def reset_moved(self) -> None:
         self.moved = False
+
+    def exit(self) -> None:
+        if self.pos == self.closest_exit and self.model.count_agents() > 1:
+            self.model.grid.remove_agent(self)
+        elif self.pos == self.closest_exit:
+            self.model.done = True
 
     def find_nearest_exit(self) -> None:
         distance = np.linalg.norm(np.array(self.pos) - np.array(self.closest_exit))

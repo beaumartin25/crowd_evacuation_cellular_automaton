@@ -58,6 +58,7 @@ class Evacuation(Model):
         self.exit_list = exit_list
         self.deflector_penalty = deflector_penalty
         self.conflict_strategy_inertia = conflict_strategy_inertia
+        self.done = False
 
         # Initialize grid
         self.grid = SingleGrid(width, height, torus=True)
@@ -87,15 +88,17 @@ class Evacuation(Model):
                 self.grid.place_agent(agent, pos)
 
         # Collect initial state
+        self.starting_count = self.count_agents()
+        self.current_count = self.count_agents()
         self.datacollector.collect(self)
 
     def update_average_exited(self):
+        self.current_count = self.count_agents()
         """Calculate and update the average number of agents exiting."""
         # Get the count of agents who have exited this step
-        exited_count = len([a for a in self.agents if a.pos == a.closest_exit])
 
         # Update totals
-        self.total_exited_agents += exited_count
+        self.total_exited_agents = self.starting_count - self.current_count
         self.step_count += 1
 
         # Calculate and return the average
@@ -103,11 +106,12 @@ class Evacuation(Model):
 
     def step(self):
         """Run one step of the model."""
-        agent_count = self.count_agents()
-        if agent_count > 1:
+        #agent_count = self.count_agents()
+        if not self.done:
             self.agents.shuffle_do("step")  # Activate all agents in random order
+            self.agents.do("exit")
             self.datacollector.collect(self)  # Collect data
-            self.agents.do('reset_moved')  # Reset moved status for all agents
+            self.agents.do("reset_moved")  # Reset moved status for all agents
 
     def count_agents(self):
         return sum(1 for cell in self.grid.coord_iter() if cell[0] is not None)
