@@ -32,7 +32,7 @@ class Evacuation(Model):
         density: float = 0.8,
         deflecting_pc: float = 0.2,
         radius: int = 1,
-        exit_list: list = [(0,19),(0,20),(0,21)],
+        exit_list: list = [(0,19),(0,20),(0,21), (19,0),(20,0),(21,0)],
         deflector_penalty = 2,
         conflict_strategy_inertia=2,
         seed=None,
@@ -54,7 +54,7 @@ class Evacuation(Model):
         self.width = width
         self.density = density
         self.deflecting_pc = deflecting_pc
-        self.radius = radius # I assume will need for later to decide how many neighbors for an empty space in front
+        self.radius = radius
         self.exit_list = exit_list
         self.deflector_penalty = deflector_penalty
         self.conflict_strategy_inertia = conflict_strategy_inertia
