@@ -5,25 +5,9 @@ from mesa.space import SingleGrid
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Function to display the grid for debugging
-def plot_grid(grid, title="Agent Distribution"):
-    grid_array = np.zeros((grid.height, grid.width))
-    for cell in grid.coord_iter():
-        cell_content, loc = cell
-        x, y = loc
-        if cell_content is not None:
-            # Map "C" to 1 and "D" to 2
-            grid_array[y][x] = 1 if cell_content.move == "C" else 2
-    plt.figure(figsize=(8, 8))
-    plt.imshow(grid_array, cmap="viridis", origin="upper")
-    plt.title(title)
-    plt.colorbar(label="Agent Move (1 = Cooperating, 2 = Defecting)")
-    plt.show()
-
-
 
 class Evacuation(Model):
-    """Model class for the Schelling segregation model."""
+    """Model class for the model."""
 
     def __init__(
         self,
@@ -37,7 +21,7 @@ class Evacuation(Model):
         conflict_strategy_inertia=2,
         seed=None,
     ):
-        """Create a new Schelling model.
+        """Create a new model.
 
         Args:
             width: Width of the grid
@@ -45,6 +29,9 @@ class Evacuation(Model):
             density: Initial chance for a cell to be populated (0-1)
             deflecting_pc: Chance for an agent start as deflecting
             radius: Search radius for checking neighbor similarity
+            exit_list: List of x and y coordinates for exits
+            deflector_penalty: penalty inforced if a deflecter plays against other deflectors
+            conflict_strategy_inertia: possiblity a cooperator changes to a deflector after losing a opportunity to move
             seed: Seed for reproducibility
         """
         super().__init__(seed=seed)
@@ -116,12 +103,3 @@ class Evacuation(Model):
     def count_agents(self):
         return sum(1 for cell in self.grid.coord_iter() if cell[0] is not None)
 
-
-# for debugging code
-model = Evacuation()
-steps = 1000
-plot_grid(model.grid, title="Initial Agent Distribution")
-for step in range(steps):
-    model.step()
-
-plot_grid(model.grid, title="Final Agent Distribution")

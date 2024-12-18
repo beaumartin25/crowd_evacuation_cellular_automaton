@@ -4,14 +4,14 @@ import random
 
 
 class EvacuationAgent(Agent):
-    """Schelling segregation agent."""
 
     def __init__(self, model, starting_move, pos):
-        """Create a new Schelling agent.
+        """Create a new agent.
 
         Args:
             model: The model instance the agent belongs to
-            agent_type: Indicator for the agent's type (minority=1, majority=0)
+            starting_move: Is the agent a deflector or cooperator on start
+            pos: agent position on board 
         """
         super().__init__(model)
         self.move = starting_move
@@ -38,8 +38,6 @@ class EvacuationAgent(Agent):
         if self.pos == None or self.moved:
             return
 
-
-        #! you might want to put a loop here just in case another agent steals this agents move
         potential_move = True # default check variable
         while potential_move:
 
@@ -88,15 +86,16 @@ class EvacuationAgent(Agent):
                 return
 
 
-
     def reset_moved(self) -> None:
         self.moved = False
+
 
     def exit(self) -> None:
         if self.pos == self.closest_exit and self.model.count_agents() > 1:
             self.model.grid.remove_agent(self)
         elif self.pos == self.closest_exit:
             self.model.done = True
+
 
     def find_nearest_exit(self) -> None:
         distance = np.linalg.norm(np.array(self.pos) - np.array(self.closest_exit))
