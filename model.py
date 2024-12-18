@@ -53,7 +53,7 @@ class Evacuation(Model):
         self.total_exited_agents = 0
         self.step_count = 0
 
-        #! Set up data collection, ideas: percentage of agents that moved, how many have changed to deflect
+        # Set up data collection
         self.datacollector = DataCollector(
             {
                 "Agents_Moved": lambda m: len([a for a in m.agents if a.moved]),
@@ -101,5 +101,6 @@ class Evacuation(Model):
             self.agents.do("reset_moved")  # Reset moved status for all agents
 
     def count_agents(self):
+        """Count the number of agents still on grid"""
         return sum(1 for cell in self.grid.coord_iter() if cell[0] is not None)
 

@@ -87,10 +87,12 @@ class EvacuationAgent(Agent):
 
 
     def reset_moved(self) -> None:
+        """Reset agent move status"""
         self.moved = False
 
 
     def exit(self) -> None:
+        """Have agent exit, if last one stop simulation on exit"""
         if self.pos == self.closest_exit and self.model.count_agents() > 1:
             self.model.grid.remove_agent(self)
         elif self.pos == self.closest_exit:
@@ -98,6 +100,7 @@ class EvacuationAgent(Agent):
 
 
     def find_nearest_exit(self) -> None:
+        """Find the nearest exit to agent and updates self.closest_exit"""
         distance = np.linalg.norm(np.array(self.pos) - np.array(self.closest_exit))
         for exit_pos in self.model.exit_list:
             new_distance = np.linalg.norm(np.array(self.pos) - np.array(exit_pos))
@@ -107,6 +110,7 @@ class EvacuationAgent(Agent):
 
 
     def find_best_move(self):
+        """Find the next best move for the agent"""
         neighborhood = self.model.grid.get_neighborhood(self.pos, moore=True, radius=self.model.radius)
         best_pos = self.pos
         best_distance = np.linalg.norm(np.array(self.pos) - np.array(self.closest_exit))
