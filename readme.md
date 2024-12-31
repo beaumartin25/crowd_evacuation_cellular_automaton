@@ -1,8 +1,8 @@
-# Crowd Evacutation Cellular Automaton
+# Crowd Evacutation Cellular Automata
 
 ## Project Overview
 
-This project simulates crowd evacuation scenarios using a cellular automaton approach integrated with game theory principles. It aims to recreate and analyze evacuation conflicts by modeling agents on a grid environment, where each agent represents an individual in a crowd. The simulation evaluates both cooperative and defective strategies, showcasing how individuals make decisions under pressure to optimize their chances of a quick and safe evacuation. The integration of game theory helps simulate strategic interactions among agents, revealing insights into behavioral dynamics, cooperation, competition, and social influence in evacuation situations. This project demonstrates the intersection of cellular automata, decision-making algorithms, and game theory analysis in understanding complex evacuation dynamics and crowd behavior.
+This project simulates crowd evacuation scenarios using a cellular automata approach integrated with game theory principles. It aims to recreate and analyze evacuation conflicts by modeling agents on a grid environment, where each agent represents an individual in a crowd. The simulation evaluates both cooperative and defective strategies, showcasing how individuals make decisions under pressure to optimize their chances of a quick and safe evacuation. The integration of game theory helps simulate strategic interactions among agents, revealing insights into behavioral dynamics, cooperation, competition, and social influence in evacuation situations. This project demonstrates the intersection of cellular automata, decision-making algorithms, and game theory analysis in understanding complex evacuation dynamics and crowd behavior.
 
 
 ## Project Structure
